@@ -159,22 +159,37 @@ elif option == "Analyze spending":
 
     if analyze_button:
         res = requests.get(f"{server_url}/analyze_spending")
+
         if res.status_code == 200:
             data = res.json()
-            total = data.get("total_spending", 0)
+
+            total = data.get("total_spending", {}).get("total", 0)
             category_data = data.get("category_spending", [])
-            
-            st.success(f"Total Spending: {total}")
-            
+
+            st.success(f"Total Spending: ₹{total}")
+
             if category_data:
                 pd_df = pd.DataFrame(category_data)
-                fig = px.bar(pd_df, x="category", y="total", title="Spending by Category")
+
+                fig = px.bar(
+                    pd_df,
+                    x="category",
+                    y="total",
+                    title="Spending by Category"
+                )
+
                 st.plotly_chart(fig)
-                
-                fig2 = px.pie(pd_df, names="category", values="total", title="Spending Distribution")
+
+                fig2 = px.pie(
+                    pd_df,
+                    names="category",
+                    values="total",
+                    title="Spending Distribution"
+                )
+
                 st.plotly_chart(fig2)
+
                 st.dataframe(pd_df)
+
             else:
                 st.info("No data available for analytical visualization.")
-        else:
-            st.error("Analysis Failed")
