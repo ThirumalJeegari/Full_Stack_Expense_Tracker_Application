@@ -40,9 +40,9 @@ elif option == "View expenses":
     if view_button:
         res = requests.get(f"{server_url}/view_exp")
         if res.status_code == 200:
-            all_exp_data = res.json().get("expense", [])
-            if all_exp_data:
-                st.dataframe(pd.DataFrame(all_exp_data))
+            exp_data = res.json().get("expenses", [])
+            if exp_data:
+                st.dataframe(pd.DataFrame(exp_data))
             else:
                 st.info("No expenses recorded yet.")
 
@@ -63,7 +63,7 @@ elif option == "Update expenses":
     if fetch_button:
         res = requests.get(f"{server_url}/get_exp/{exp_id}")
         if res.status_code == 200:
-            exp_data = res.json().get("exp_data")
+            exp_data = res.json().get("expense")
             if exp_data:
                 st.session_state.show_update_form = True
                 st.session_state.title = exp_data.get("title", "")
@@ -90,7 +90,7 @@ elif option == "Delete expenses":
     st.subheader("Delete expenses from the data")
     res = requests.get(f"{server_url}/view_exp")
     if res.status_code == 200:
-        all_exp_data = res.json().get("expense", [])
+        all_exp_data = res.json().get("expenses", [])
         if all_exp_data:
             pd_df = pd.DataFrame(all_exp_data)
             st.dataframe(pd_df)
@@ -103,7 +103,7 @@ elif option == "Delete expenses":
                 else:
                     res_del = requests.delete(f"{server_url}/delete_exp/{id_to_delete}")
                     if res_del.status_code == 200:
-                        st.success(res.json()["msg"])
+                        st.success(res_del.json()["msg"])
         else:
             st.info("No records available to delete.")
 
