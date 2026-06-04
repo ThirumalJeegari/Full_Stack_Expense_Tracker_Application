@@ -41,6 +41,12 @@ CREATE TABLE IF NOT EXISTS expenses (
 
 con.commit()
 
+@app.get("/")
+def home():
+    return{
+        "msg":"Backend Running Successfully"
+    }
+
 # Add Expense
 @app.post("/add_exp")
 def add_expense(new_data: dict):
